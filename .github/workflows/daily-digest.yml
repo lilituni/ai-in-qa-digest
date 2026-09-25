@@ -1,0 +1,21 @@
+name: Daily Influencer Digest
+
+on:
+  schedule:
+    - cron: "0 17 * * *"   # 17:00 UTC = 21:00 Yerevan time, every day
+  workflow_dispatch:        # lets you trigger it manually too, for testing
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: python src/digest.py --debug
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
